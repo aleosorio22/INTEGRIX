@@ -1,0 +1,62 @@
+/* Estilos generales */
+body {
+    background-color: #f9f9f9;
+}
+
+header {
+    background-color: #4CAF50;
+    padding: 1rem;
+}
+
+h1, h2 {
+    font-weight: bold;
+}
+
+button {
+    width: 60px;
+    height: 60px;
+    font-size: 18px;
+    margin: 5px;
+}
+
+button:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.alert-info {
+    background-color: #e0f7fa;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.form-control {
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+}
+
+.btn-danger {
+    width: 49%;
+}
+
+.campo-bloqueado {
+    background-color: #f0f0f0;
+    cursor: not-allowed;
+}
+
+.dark-mode {
+    background-color: #333;
+    color: white;
+}
+
+.dark-mode .form-control {
+    background-color: #555;
+    color: white;
+}
+
+/* Estilos para la alerta */
+.d-none {
+    display: none;
+}
