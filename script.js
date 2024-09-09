@@ -21,6 +21,10 @@ async function resolverConValidacion() {
     // Insertar automáticamente "*" entre cierre de paréntesis y variable o número (ej. (x+1)3 -> (x+1)*3)
     input = input.replace(/(\))(\d|[a-zA-Z])/g, '$1*$2');
 
+    // Limpiar el resultado y ocultar errores antes de procesar
+    limpiarResultado();
+    ocultarError();
+
     if (!input) {
         mostrarError('Por favor, ingresa una función válida.');
         return;
@@ -32,6 +36,7 @@ async function resolverConValidacion() {
         let result;
         let limiteInf = '';
         let limiteSup = '';
+        let integralStr = '';
 
         if (tipo === 'indefinida' || tipo === 'por-partes' || tipo === 'sustitucion' || tipo === 'trigonometrica') {
             // Resolver integral indefinida (no necesita límites)
@@ -41,6 +46,7 @@ async function resolverConValidacion() {
                 integral_result = integrate(${input}, x)
                 latex(integral_result) if integral_result else 'None'
             `);
+            integralStr = `\\int \\left(${input}\\right) \\, dx`;
         } else if (tipo === 'definida' || tipo === 'impropia') {
             // Obtener límites solo si son necesarios
             limiteInf = document.getElementById('limite-inf').value.trim();
@@ -67,6 +73,7 @@ async function resolverConValidacion() {
                 integral_result = integrate(${input}, (x, ${limiteInf}, ${limiteSup}))
                 latex(integral_result) if integral_result else 'None'
             `);
+            integralStr = `\\int_{${limiteInf}}^{${limiteSup}} \\left(${input}\\right) \\, dx`;
         }
 
         if (result === 'None') {
@@ -75,37 +82,20 @@ async function resolverConValidacion() {
         }
 
         const outputElement = document.getElementById('math-output');
-        const renderOutput = document.getElementById('render-output');
 
-        // Si es definida o impropia, incluir los límites en la renderización
-        if (tipo === 'definida' || tipo === 'impropia') {
-            // Mostrar el resultado en el campo original
-            katex.render(`\\int_{${limiteInf}}^{${limiteSup}} \\left(${input}\\right) \\, dx = ${result}`, outputElement, {
-                throwOnError: false
-            });
-            
-            // Renderizar el resultado de nuevo en la sección de "Resultado Renderizado"
-            katex.render(result, renderOutput, {
-                throwOnError: false
-            });
-        } else {
-            // Si es indefinida, no mostrar límites
-            katex.render(`\\int \\left(${input}\\right) \\, dx = ${result}`, outputElement, {
-                throwOnError: false
-            });
-            
-            // Renderizar el resultado de nuevo en la sección de "Resultado Renderizado"
-            katex.render(result, renderOutput, {
-                throwOnError: false
-            });
-        }
+        // Renderizar el resultado de la integral en el campo de resultado
+        katex.render(`${integralStr} = ${result}`, outputElement, {
+            throwOnError: false
+        });
+
+        // Guardar en historial
+        guardarEnHistorial(integralStr, result);
 
     } catch (error) {
         mostrarError("Error en el cálculo de la integral.");
         console.error("Error al calcular la integral:", error);
     }
 }
-
 
 // Mostrar errores
 function mostrarError(mensaje) {
@@ -118,6 +108,12 @@ function mostrarError(mensaje) {
 function ocultarError() {
     const alertaError = document.getElementById('alerta-error');
     alertaError.classList.add('d-none');
+}
+
+// Limpiar el resultado
+function limpiarResultado() {
+    const outputElement = document.getElementById('math-output');
+    outputElement.textContent = 'Aquí se verá la integral resuelta.';
 }
 
 // Función para agregar símbolos al campo de entrada
@@ -141,7 +137,8 @@ function agregarSimbolo(simbolo) {
     } else {
         input.value += simbolo;
     }
-    
+
+    limpiarResultado();
     renderMathInput();  // Renderizar el input actualizado
 }
 
@@ -160,6 +157,8 @@ function renderMathInput() {
 function eliminarUltimo() {
     const input = document.getElementById('math-input');
     input.value = input.value.slice(0, -1);
+    limpiarResultado();
+    ocultarError();
     renderMathInput();
 }
 
@@ -167,6 +166,8 @@ function eliminarUltimo() {
 function eliminarTodo() {
     const input = document.getElementById('math-input');
     input.value = '';
+    limpiarResultado();
+    ocultarError();
     renderMathInput();
 }
 
@@ -199,14 +200,53 @@ function mostrarOcultarLimites() {
 // Llama a esta función cuando el usuario cambie el tipo de integral
 document.getElementById('tipo-integral').addEventListener('change', mostrarOcultarLimites);
 
-// Actualizar la visibilidad de los límites según el tipo de integral
-function actualizarLimites() {
-    const tipo = document.getElementById('tipo-integral').value;
-    const limites = document.getElementById('limites');
-
-    if (tipo === 'indefinida') {
-        limites.style.display = 'none';
-    } else {
-        limites.style.display = 'block';
-    }
+function guardarEnHistorial(integral, resultado) {
+    let historial = JSON.parse(localStorage.getItem('historial')) || [];
+    historial.push({ integral, resultado });
+    localStorage.setItem('historial', JSON.stringify(historial));
+    actualizarHistorial();
 }
+
+
+// Función para actualizar y mostrar el historial
+function actualizarHistorial() {
+    const historialElement = document.getElementById('historial-output');
+    let historial = JSON.parse(localStorage.getItem('historial')) || [];
+    
+    if (historial.length === 0) {
+        historialElement.innerHTML = 'Aquí se verá el historial de cálculos.';
+        return;
+    }
+    
+    // Invertir el historial para que el más reciente esté al principio
+    historial = historial.reverse();
+    
+    historialElement.innerHTML = historial.map(item => `
+        <p>\\(${item.integral}\\) = \\(${item.resultado}\\)</p>
+    `).join("");
+
+    // Renderizar las expresiones en el historial
+    renderMathInElement(historialElement, {
+        delimiters: [
+            { left: "\\(", right: "\\)", display: false }
+        ]
+    });
+}
+
+// Inicializar historial al cargar la página
+document.addEventListener('DOMContentLoaded', actualizarHistorial);
+
+document.getElementById('toggle-historial-btn').addEventListener('click', function() {
+    const historialSection = document.getElementById('historial');
+    const button = document.getElementById('toggle-historial-btn');
+    
+    // Alternar la visibilidad del historial
+    if (historialSection.classList.contains('visible')) {
+        historialSection.classList.remove('visible');
+        button.textContent = 'Mostrar Historial';
+    } else {
+        historialSection.classList.add('visible');
+        button.textContent = 'Ocultar Historial';
+    }
+});
+

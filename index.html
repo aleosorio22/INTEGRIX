@@ -88,7 +88,6 @@
                 </div>
             </div>
 
-
             <!-- Botones de eliminar -->
             <div class="mb-3">
                 <div class="d-flex justify-content-between">
@@ -131,10 +130,15 @@
             </div>
         </section>
 
-        <!-- Nueva sección para el resultado renderizado de manera más clara -->
-        <section id="resultado-renderizado" class="mt-4">
-            <h2>Resultado Renderizado:</h2>
-            <div id="render-output" class="alert alert-success" role="alert">Aquí se verá el resultado renderizado claramente.</div>
+        <!-- Botón para mostrar/ocultar historial -->
+        <div class="text-center mt-4">
+            <button id="toggle-historial-btn" class="btn btn-primary">Mostrar Historial</button>
+        </div>
+
+        <!-- Historial de cálculos -->
+        <section id="historial" class="mt-4">
+            <h2>Historial de Cálculos:</h2>
+            <div id="historial-output" class="alert alert-secondary" role="alert">Aquí se verá el historial de cálculos.</div>
         </section>
 
     </main>
