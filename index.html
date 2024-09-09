@@ -8,6 +8,9 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 
+    <!-- KaTeX CSS para renderizar matemáticas -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.css">
+
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -32,25 +35,87 @@
             <!-- Selección de tipo de integral -->
             <div class="mb-3">
                 <label for="tipo-integral" class="form-label">Tipo de Integral:</label>
-                <select id="tipo-integral" class="form-select" onchange="actualizarLimites()">
+                <select id="tipo-integral" class="form-select">
                     <option value="indefinida">Indefinida</option>
                     <option value="definida">Definida</option>
                     <option value="impropia">Impropia</option>
+                    <option value="por-partes">Integración por partes</option>
+                    <option value="sustitucion">Por sustitución</option>
+                    <option value="trigonometrica">Potencias trigonométricas</option>
                 </select>
-            </div>
+            </div>            
 
-            <!-- Campo para la función a integrar -->
+            <!-- Campo para la función a integrar con renderizado en tiempo real -->
             <div class="mb-3">
                 <label for="math-input" class="form-label">Función para integrar:</label>
-                <input type="text" id="math-input" class="form-control" placeholder="Ej: x**2, sin(x)">
+                <div id="math-render" class="form-control" style="min-height: 50px; background-color: #f8f9fa; padding: 10px;"></div>
+                <input type="text" id="math-input" class="form-control d-none" placeholder="Escribe una fórmula LaTeX aquí">
             </div>
 
-            <!-- Límites para integrales definidas e impropias -->
+            <!-- Botones para números, operadores, trigonométricas y funciones -->
+            <div class="mb-3">
+                <div class="d-flex flex-wrap gap-2 justify-content-center">
+                    <!-- Números y operadores -->
+                    <button class="btn btn-outline-secondary" onclick="agregarSimbolo('0')">0</button>
+                    <button class="btn btn-outline-secondary" onclick="agregarSimbolo('1')">1</button>
+                    <button class="btn btn-outline-secondary" onclick="agregarSimbolo('2')">2</button>
+                    <button class="btn btn-outline-secondary" onclick="agregarSimbolo('3')">3</button>
+                    <button class="btn btn-outline-secondary" onclick="agregarSimbolo('4')">4</button>
+                    <button class="btn btn-outline-secondary" onclick="agregarSimbolo('5')">5</button>
+                    <button class="btn btn-outline-secondary" onclick="agregarSimbolo('6')">6</button>
+                    <button class="btn btn-outline-secondary" onclick="agregarSimbolo('7')">7</button>
+                    <button class="btn btn-outline-secondary" onclick="agregarSimbolo('8')">8</button>
+                    <button class="btn btn-outline-secondary" onclick="agregarSimbolo('9')">9</button>
+                
+                    <!-- Operadores y funciones -->
+                    <button class="btn btn-outline-secondary" onclick="agregarSimbolo('x')">x</button>
+                    <button class="btn btn-outline-secondary" onclick="agregarSimbolo('+')">+</button>
+                    <button class="btn btn-outline-secondary" onclick="agregarSimbolo('-')">-</button>
+                    <button class="btn btn-outline-secondary" onclick="agregarSimbolo('*')">*</button>
+                    <button class="btn btn-outline-secondary" onclick="agregarSimbolo('/')">/</button>
+                    <button class="btn btn-outline-secondary" onclick="agregarSimbolo('^')">^</button>
+
+                    <!-- Funciones -->
+                    <button class="btn btn-outline-secondary" onclick="agregarSimbolo('ln')">ln</button> <!-- Logaritmo natural -->
+                    <button class="btn btn-outline-secondary" onclick="agregarSimbolo('log')">log</button> <!-- Logaritmo base 10 -->
+                    <button class="btn btn-outline-secondary" onclick="agregarSimbolo('exp')">exp</button> <!-- Exponencial e^x -->
+                    <button class="btn btn-outline-secondary" onclick="agregarSimbolo('sin')">sin</button>
+                    <button class="btn btn-outline-secondary" onclick="agregarSimbolo('cos')">cos</button>
+                    <button class="btn btn-outline-secondary" onclick="agregarSimbolo('tan')">tan</button>
+                    <button class="btn btn-outline-secondary" onclick="agregarSimbolo('sqrt')">√</button>
+                    <button class="btn btn-outline-secondary" onclick="agregarSimbolo('(')">(</button>
+                    <button class="btn btn-outline-secondary" onclick="agregarSimbolo(')')">)</button>
+                </div>
+            </div>
+
+
+            <!-- Botones de eliminar -->
+            <div class="mb-3">
+                <div class="d-flex justify-content-between">
+                    <button class="btn btn-danger" onclick="eliminarUltimo()">Eliminar último</button>
+                    <button class="btn btn-danger" onclick="eliminarTodo()">Eliminar todo</button>
+                </div>
+            </div>
+
+            <!-- Límites para integrales definidas o impropias -->
             <div id="limites" class="mb-3" style="display: none;">
                 <label for="limite-inf" class="form-label">Límite inferior:</label>
-                <input type="text" id="limite-inf" class="form-control" placeholder="Ej: 0">
+                <div class="input-group">
+                    <select id="infinito-inf" class="form-select" onchange="toggleInput('inf', 'limite-inf')">
+                        <option value="none">Número</option>
+                        <option value="infinito">∞</option>
+                    </select>
+                    <input type="text" id="limite-inf" class="form-control" placeholder="Ej: 1">
+                </div>
+                
                 <label for="limite-sup" class="form-label mt-3">Límite superior:</label>
-                <input type="text" id="limite-sup" class="form-control" placeholder="Ej: 1">
+                <div class="input-group">
+                    <select id="infinito-sup" class="form-select" onchange="toggleInput('sup', 'limite-sup')">
+                        <option value="none">Número</option>
+                        <option value="infinito">∞</option>
+                    </select>
+                    <input type="text" id="limite-sup" class="form-control" placeholder="Ej: 3">
+                </div>
             </div>
 
             <!-- Botón para resolver -->
@@ -60,10 +125,17 @@
         <!-- Resultado -->
         <section id="resultado" class="mt-4">
             <h2>Resultado:</h2>
-            <div id="math-output" class="alert alert-info" role="alert">Aquí se mostrará el resultado.</div>
+            <div id="math-output" class="alert alert-info" role="alert">Aquí se verá la integral resuelta.</div>
+            <div id="loader" class="spinner-border text-success d-none" role="status">
+                <span class="visualmente-oculto">Calculando...</span>
+            </div>
         </section>
 
     </main>
+
+    <!-- KaTeX JS -->
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/contrib/auto-render.min.js"></script>
 
     <!-- Pyodide (Python in Browser) -->
     <script src="https://cdn.jsdelivr.net/pyodide/v0.21.3/full/pyodide.js"></script>
