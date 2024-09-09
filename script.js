@@ -36,10 +36,10 @@ async function resolverConValidacion() {
         if (tipo === 'indefinida' || tipo === 'por-partes' || tipo === 'sustitucion' || tipo === 'trigonometrica') {
             // Resolver integral indefinida (no necesita límites)
             result = await pyodide.runPythonAsync(`
-                from sympy import symbols, integrate, sin, cos, tan, exp, log, sqrt, oo, pi
+                from sympy import symbols, integrate, sin, cos, tan, exp, log, sqrt, oo, pi, latex
                 x = symbols('x')
                 integral_result = integrate(${input}, x)
-                integral_result if integral_result else 'None'
+                latex(integral_result) if integral_result else 'None'
             `);
         } else if (tipo === 'definida' || tipo === 'impropia') {
             // Obtener límites solo si son necesarios
@@ -62,10 +62,10 @@ async function resolverConValidacion() {
 
             // Resolver integral definida o impropia
             result = await pyodide.runPythonAsync(`
-                from sympy import symbols, integrate, sin, cos, tan, exp, log, sqrt, oo, pi
+                from sympy import symbols, integrate, sin, cos, tan, exp, log, sqrt, oo, pi, latex
                 x = symbols('x')
                 integral_result = integrate(${input}, (x, ${limiteInf}, ${limiteSup}))
-                integral_result if integral_result else 'None'
+                latex(integral_result) if integral_result else 'None'
             `);
         }
 
@@ -75,15 +75,27 @@ async function resolverConValidacion() {
         }
 
         const outputElement = document.getElementById('math-output');
+        const renderOutput = document.getElementById('render-output');
 
         // Si es definida o impropia, incluir los límites en la renderización
         if (tipo === 'definida' || tipo === 'impropia') {
+            // Mostrar el resultado en el campo original
             katex.render(`\\int_{${limiteInf}}^{${limiteSup}} \\left(${input}\\right) \\, dx = ${result}`, outputElement, {
+                throwOnError: false
+            });
+            
+            // Renderizar el resultado de nuevo en la sección de "Resultado Renderizado"
+            katex.render(result, renderOutput, {
                 throwOnError: false
             });
         } else {
             // Si es indefinida, no mostrar límites
             katex.render(`\\int \\left(${input}\\right) \\, dx = ${result}`, outputElement, {
+                throwOnError: false
+            });
+            
+            // Renderizar el resultado de nuevo en la sección de "Resultado Renderizado"
+            katex.render(result, renderOutput, {
                 throwOnError: false
             });
         }
