@@ -12,6 +12,11 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.css">
 
     <link rel="stylesheet" href="style.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 </head>
 <body>
 
@@ -126,7 +131,20 @@
             <h2>Resultado:</h2>
             <div id="math-output" class="alert alert-info" role="alert">Aquí se verá la integral resuelta.</div>
             <div id="loader" class="spinner-border text-success d-none" role="status">
-                <span class="visualmente-oculto">Calculando...</span>
+                <span class="visualmente-oculto"></span>
+            </div>
+            
+            <div class="row mt-3">
+                <div class="col-12">
+                    <button id="graphic-button" class="btn btn-primary w-100 d-none" onclick="irAGrafica()">Ver Gráfica</button>
+                </div>
+            </div>
+
+            <!-- Botón para compartir el resultado como imagen -->
+            <div class="row mt-3">
+                <div class="col-12">
+                    <button id="share-button" class="btn btn-primary w-100 d-none" onclick="generarImagenResultado()">Compartir resultado como imagen</button>
+                </div>
             </div>
         </section>
 
@@ -150,7 +168,16 @@
     <!-- Pyodide (Python in Browser) -->
     <script src="https://cdn.jsdelivr.net/pyodide/v0.21.3/full/pyodide.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="script/graphics.js"></script>
     <script src="script.js"></script>
+    <script src="script/shareResult.js"></script>
+
+
+<!-- Canvas oculto para generar la imagen del resultado -->
+<canvas id="resultado-canvas" style="display:none;"></canvas>
+
 
 </body>
 </html>

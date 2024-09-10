@@ -7,6 +7,8 @@ async function cargarSymPy() {
     return pyodide;
 }
 
+let resultadoNumerico = null;
+
 // Resolver integral con validación
 async function resolverConValidacion() {
     const tipo = document.getElementById('tipo-integral').value;
@@ -24,11 +26,14 @@ async function resolverConValidacion() {
     // Limpiar el resultado y ocultar errores antes de procesar
     limpiarResultado();
     ocultarError();
+    ocultarBotonesCompartir(); 
 
     if (!input) {
         mostrarError('Por favor, ingresa una función válida.');
         return;
     }
+
+    mostrarLoader();
 
     const pyodide = await cargarSymPy();
 
@@ -47,6 +52,8 @@ async function resolverConValidacion() {
                 latex(integral_result) if integral_result else 'None'
             `);
             integralStr = `\\int \\left(${input}\\right) \\, dx`;
+            
+        
         } else if (tipo === 'definida' || tipo === 'impropia') {
             // Obtener límites solo si son necesarios
             limiteInf = document.getElementById('limite-inf').value.trim();
@@ -68,17 +75,26 @@ async function resolverConValidacion() {
 
             // Resolver integral definida o impropia
             result = await pyodide.runPythonAsync(`
-                from sympy import symbols, integrate, sin, cos, tan, exp, log, sqrt, oo, pi, latex
+                from sympy import symbols, integrate, N, sin, cos, tan, exp, log, sqrt, oo, pi, latex
                 x = symbols('x')
                 integral_result = integrate(${input}, (x, ${limiteInf}, ${limiteSup}))
-                latex(integral_result) if integral_result else 'None'
+                latex_result = latex(integral_result)
+                numeric_result = N(integral_result)
+                latex_result + "," + str(numeric_result)  # Retornar ambos resultados
             `);
+
+            const [latexResult, numericResult] = result.split(",");  // Separar latex y valor numérico
+
             integralStr = `\\int_{${limiteInf}}^{${limiteSup}} \\left(${input}\\right) \\, dx`;
+            resultadoNumerico = numericResult.trim();  // Guardar el valor numérico
         }
 
         if (result === 'None') {
             mostrarError("La integral no tiene una solución computable.");
+            ocultarBotonesCompartir();
+            ocultarLoader();
             return;
+
         }
 
         const outputElement = document.getElementById('math-output');
@@ -88,11 +104,14 @@ async function resolverConValidacion() {
             throwOnError: false
         });
 
-        // Guardar en historial
         guardarEnHistorial(integralStr, result);
+        mostrarBotonesCompartir();
+        ocultarLoader();
 
     } catch (error) {
         mostrarError("Error en el cálculo de la integral.");
+        ocultarBotonesCompartir();
+        ocultarLoader();
         console.error("Error al calcular la integral:", error);
     }
 }
@@ -114,6 +133,7 @@ function ocultarError() {
 function limpiarResultado() {
     const outputElement = document.getElementById('math-output');
     outputElement.textContent = 'Aquí se verá la integral resuelta.';
+    ocultarBotonesCompartir();
 }
 
 // Función para agregar símbolos al campo de entrada
@@ -197,6 +217,17 @@ function mostrarOcultarLimites() {
     }
 }
 
+function mostrarLoader() {
+    const loader = document.getElementById('loader');
+    loader.classList.remove('d-none');  // Mostrar el loader
+}
+
+function ocultarLoader() {
+    const loader = document.getElementById('loader');
+    loader.classList.add('d-none');  // Ocultar el loader
+}
+
+
 // Llama a esta función cuando el usuario cambie el tipo de integral
 document.getElementById('tipo-integral').addEventListener('change', mostrarOcultarLimites);
 
@@ -250,3 +281,29 @@ document.getElementById('toggle-historial-btn').addEventListener('click', functi
     }
 });
 
+// Función para mostrar los botones de compartir
+function mostrarBotonesCompartir() {
+    const shareButton = document.getElementById('share-button');
+    const graphicButton = document.getElementById('graphic-button')
+    shareButton.classList.remove('d-none'); 
+    graphicButton.classList.remove('d-none')
+}
+
+// Función para ocultar los botones de compartir
+function ocultarBotonesCompartir() {
+    const shareButtons = document.getElementById('share-button');
+    const graphicButton = document.getElementById('graphic-button')
+    shareButtons.classList.add('d-none');  
+    graphicButton.classList.add('d-none')
+}
+
+
+function irAGrafica() {
+    const tipo = document.getElementById('tipo-integral').value;
+    const input = document.getElementById('math-input').value.trim();
+    const limiteInf = document.getElementById('limite-inf').value.trim();
+    const limiteSup = document.getElementById('limite-sup').value.trim();
+
+   
+    window.location.href = `grafica.html?tipo=${encodeURIComponent(tipo)}&input=${encodeURIComponent(input)}&limiteInf=${encodeURIComponent(limiteInf)}&limiteSup=${encodeURIComponent(limiteSup)}&resultado=${encodeURIComponent(resultadoNumerico)}`;
+}

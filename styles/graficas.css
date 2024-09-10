@@ -1,0 +1,89 @@
+body {
+    background-color: #f0f2f5;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-wrap: wrap;
+    gap: 20px; /* Añadimos un espacio entre los contenedores */
+}
+
+#grafica-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px; /* Limitamos el tamaño máximo */
+}
+
+#controles {
+    width: 100%;
+    max-width: 400px; /* Limitamos el tamaño en pantallas grandes */
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+#canvas-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%; /* Cambiamos a 100% para que ocupe todo el ancho disponible */
+    height: auto;
+}
+
+
+#math-output {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 20px;
+    background-color: #e9f7ef;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%; /* Hacemos que ocupe todo el ancho */
+}
+
+canvas {
+    max-width: 100%;
+    height: auto;
+}
+
+.btn-group {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-around; /* Espaciamos los botones */
+    flex-wrap: wrap;
+}
+
+button {
+    width: 100%; /* Los botones ocupan todo el ancho disponible */
+    margin-bottom: 10px; /* Añadimos espacio entre los botones */
+}
+
+/* Media Queries para pantallas pequeñas */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column; /* Los elementos se colocan en columna */
+        height: auto; /* Ajustamos la altura para que no se vea cortada */
+    }
+
+    #grafica-container {
+        width: 100%; /* Se ajusta al ancho completo */
+    }
+
+    #controles {
+        width: 100%; /* Los controles ocupan todo el ancho */
+        margin-left: 0; /* Eliminamos el margen lateral */
+    }
+
+    button {
+        width: 100%; /* Los botones ocupan todo el ancho en móviles */
+    }
+}

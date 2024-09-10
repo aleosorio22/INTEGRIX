@@ -79,6 +79,8 @@ button:focus {
     display: none;
 }
 
+
+
 /* Historial */
 #historial-output {
     background-color: #fff;
@@ -164,3 +166,44 @@ section:hover {
     display: block;
     opacity: 1;
 }
+
+/* Botón compartido en redes */
+button.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: #fff;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Transición suave para color y escala */
+}
+
+button.btn-primary:hover {
+    background-color: #0056b3; /* Color más oscuro en hover */
+}
+
+button.btn-primary:active {
+    transform: scale(0.95); /* Efecto de reducción cuando se presiona */
+    background-color: #003d7a; /* Cambia el color al presionar */
+}
+
+/* Estilos adicionales para otros botones de compartir */
+button.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: #fff;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button.btn-success:hover {
+    background-color: #218838;
+}
+
+button.btn-success:active {
+    transform: scale(0.95);
+    background-color: #1e7e34;
+}
+
+/* Estilos adicionales para otros botones de compartir */
+
+
+
+
+
