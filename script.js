@@ -103,35 +103,93 @@ async function resolverConValidacion() {
             // Obtener límites solo si son necesarios
             limiteInf = document.getElementById('limite-inf').value.trim();
             limiteSup = document.getElementById('limite-sup').value.trim();
-
             // Reemplazar E o e por exp(1)
             limiteInf = limiteInf.replace(/E|e/g, 'exp(1)');
             limiteSup = limiteSup.replace(/E|e/g, 'exp(1)');
-
             const selectInf = document.getElementById('infinito-inf').value;
             const selectSup = document.getElementById('infinito-sup').value;
-
             if (selectInf === 'infinito') {
-                limiteInf = 'oo';
+                limiteInf = '-oo';
             }
             if (selectSup === 'infinito') {
                 limiteSup = 'oo';
             }
-
+            
             // Resolver integral definida o impropia
             result = await pyodide.runPythonAsync(`
-                from sympy import symbols, integrate, N, sin, cos, tan, exp, log, sqrt, oo, pi, latex
+                from sympy import symbols, integrate, N, sin, cos, tan, exp, log, sqrt, oo, pi, latex, diff
+                import json
+        
                 x = symbols('x')
-                integral_result = integrate(${input}, (x, ${limiteInf}, ${limiteSup}))
-                latex_result = latex(integral_result)
-                numeric_result = N(integral_result)
-                latex_result + "," + str(numeric_result)  # Retornar ambos resultados
+                input_expr = ${input}
+                limite_inf = ${limiteInf}
+                limite_sup = ${limiteSup}
+                
+                # Calcular la antiderivada
+                antiderivada = integrate(input_expr, x)
+                
+                # Aplicar el teorema fundamental del cálculo
+                resultado_definida = antiderivada.subs(x, limite_sup) - antiderivada.subs(x, limite_inf)
+                
+                # Calcular el valor numérico
+                valor_numerico = N(resultado_definida)
+                
+                pasos_integracion = [
+                    {
+                        "paso": f"Función a integrar: {latex(input_expr)}",
+                        "explicacion": "Esta es la función original que vamos a integrar."
+                    },
+                    {
+                        "paso": f"Límites de integración: de {latex(limite_inf)} a {latex(limite_sup)}",
+                        "explicacion": "Estos son los límites de la integral definida."
+                    },
+                    {
+                        "paso": f"Calculamos la antiderivada: {latex(antiderivada)}",
+                        "explicacion": "Encontramos la antiderivada de la función."
+                    },
+                    {
+                        "paso": "Aplicamos el Teorema Fundamental del Cálculo:",
+                        "explicacion": "Evaluamos la antiderivada en los límites superior e inferior y restamos."
+                    },
+                    {
+                        "paso": f"{latex(antiderivada.subs(x, limite_sup))} - {latex(antiderivada.subs(x, limite_inf))}",
+                        "explicacion": "Sustituimos los límites en la antiderivada."
+                    },
+                    {
+                        "paso": f"Resultado: {latex(resultado_definida)}",
+                        "explicacion": "Este es el resultado de la integral definida."
+                    },
+                    {
+                        "paso": f"Valor numérico: {valor_numerico}",
+                        "explicacion": "Evaluación numérica del resultado."
+                    }
+                ]
+                
+                result = {
+                    'latex_result': latex(resultado_definida),
+                    'numeric_result': str(valor_numerico),
+                    'pasos': pasos_integracion
+                }
+                
+                json.dumps(result)
             `);
-
-            const [latexResult, numericResult] = result.split(",");  // Separar latex y valor numérico
-
+        
+            const pythonResult = JSON.parse(result);
+            result = pythonResult.latex_result;
+            resultadoNumerico = pythonResult.numeric_result;
+            pasos = pythonResult.pasos;
+        
+            console.log("Resultado de la integral:", result);
+            console.log("Valor numérico:", resultadoNumerico);
+            console.log("Pasos de la integración:", pasos);
+        
+            if (Array.isArray(pasos)) {
+                mostrarPasosIntegracion(pasos);
+            } else {
+                console.log("Pasos no es una lista. Tipo recibido:", typeof pasos);
+            }
+        
             integralStr = `\\int_{${limiteInf}}^{${limiteSup}} \\left(${input}\\right) \\, dx`;
-            resultadoNumerico = numericResult.trim();  // Guardar el valor numérico
         }
 
 
