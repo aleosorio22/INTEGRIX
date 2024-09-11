@@ -133,7 +133,18 @@
             <div id="loader" class="spinner-border text-success d-none" role="status">
                 <span class="visualmente-oculto"></span>
             </div>
+
+            <!-- Mostrar los pasos intermedios de la integral -->
+            <div id="pasos-container" class="mt-4">
+                <h3>Pasos del Cálculo:</h3>
+                <div id="pasos-output" class="alert alert-secondary" role="alert">Aquí se verán los pasos de la integración.</div>
+            </div>
             
+            <!-- Botón para mostrar/ocultar pasos -->
+            <div class="text-center mt-4">
+                <button id="toggle-pasos-btn" class="btn btn-primary" onclick="togglePasos()">Mostrar/Ocultar Pasos</button>
+            </div>
+
             <div class="row mt-3">
                 <div class="col-12">
                     <button id="graphic-button" class="btn btn-primary w-100 d-none" onclick="irAGrafica()">Ver Gráfica</button>

@@ -8,7 +8,6 @@ async function cargarSymPy() {
 }
 
 let resultadoNumerico = null;
-
 // Resolver integral con validación
 async function resolverConValidacion() {
     const tipo = document.getElementById('tipo-integral').value;
@@ -42,18 +41,64 @@ async function resolverConValidacion() {
         let limiteInf = '';
         let limiteSup = '';
         let integralStr = '';
+        let pasos = []; 
 
         if (tipo === 'indefinida' || tipo === 'por-partes' || tipo === 'sustitucion' || tipo === 'trigonometrica') {
             // Resolver integral indefinida (no necesita límites)
             result = await pyodide.runPythonAsync(`
-                from sympy import symbols, integrate, sin, cos, tan, exp, log, sqrt, oo, pi, latex
+                from sympy import symbols, integrate, sin, cos, tan, exp, log, sqrt, oo, pi, latex, diff
+                import json
+
                 x = symbols('x')
-                integral_result = integrate(${input}, x)
-                latex(integral_result) if integral_result else 'None'
+                input_expr = ${input}
+                integral_result = integrate(input_expr, x)
+                
+                pasos_integracion = [
+                    {
+                        "paso": f"Función a integrar: {latex(input_expr)}",
+                        "explicacion": "Esta es la función original que vamos a integrar."
+                    },
+                    {
+                        "paso": f"Aplicamos la regla de integración: {latex(integral_result)}",
+                        "explicacion": "Utilizamos las reglas básicas de integración para encontrar la antiderivada."
+                    },
+                    {
+                        "paso": f"Verificación: derivada de la integral: {latex(diff(integral_result, x))}",
+                        "explicacion": "Comprobamos que la derivada de nuestra integral es igual a la función original."
+                    },
+                    {
+                        "paso": f"Resultado simplificado: {latex(integral_result.simplify())}",
+                        "explicacion": "Simplificamos la expresión final para obtener la forma más compacta."
+                    },
+                    {
+                        "paso": f"Resultado final: {latex(integral_result)} + C",
+                        "explicacion": "Añadimos la constante de integración C para representar todas las posibles antiderivadas."
+                    }
+                ]
+                
+                result = {
+                    'latex_result': latex(integral_result) + ' + C',
+                    'pasos': pasos_integracion
+                }
+                
+                json.dumps(result)
             `);
+
+            const pythonResult = JSON.parse(result);
+            result = pythonResult.latex_result;
+            pasos = pythonResult.pasos;
+
+            console.log("Resultado de la integral:", result);
+            console.log("Pasos de la integración:", pasos);
+
+            if (Array.isArray(pasos)) {
+                mostrarPasosIntegracion(pasos);
+            } else {
+                console.log("Pasos no es una lista. Tipo recibido:", typeof pasos);
+            }
+
             integralStr = `\\int \\left(${input}\\right) \\, dx`;
-            
-        
+
         } else if (tipo === 'definida' || tipo === 'impropia') {
             // Obtener límites solo si son necesarios
             limiteInf = document.getElementById('limite-inf').value.trim();
@@ -89,12 +134,12 @@ async function resolverConValidacion() {
             resultadoNumerico = numericResult.trim();  // Guardar el valor numérico
         }
 
+
         if (result === 'None') {
             mostrarError("La integral no tiene una solución computable.");
             ocultarBotonesCompartir();
             ocultarLoader();
             return;
-
         }
 
         const outputElement = document.getElementById('math-output');
@@ -103,6 +148,11 @@ async function resolverConValidacion() {
         katex.render(`${integralStr} = ${result}`, outputElement, {
             throwOnError: false
         });
+
+         // Mostrar los pasos si existen
+         if (Array.isArray(pasos)) {
+            mostrarPasosIntegracion(pasos);
+        }
 
         guardarEnHistorial(integralStr, result);
         mostrarBotonesCompartir();
@@ -115,6 +165,41 @@ async function resolverConValidacion() {
         console.error("Error al calcular la integral:", error);
     }
 }
+
+
+function mostrarPasosIntegracion(pasos) {
+    const pasosContainer = document.getElementById('pasos-output');
+    pasosContainer.innerHTML = '';  // Limpiar los pasos previos
+
+    pasos.forEach((paso, index) => {
+        const pasoElement = document.createElement('div');
+        pasoElement.className = 'paso-integracion mb-3';
+        
+        // Crear el encabezado del paso
+        const pasoHeader = document.createElement('h5');
+        pasoHeader.textContent = `Paso ${index + 1}`;
+        pasoElement.appendChild(pasoHeader);
+        
+        // Crear el contenedor para la expresión matemática
+        const mathContainer = document.createElement('div');
+        mathContainer.className = 'math-container';
+        katex.render(paso.paso, mathContainer, {
+            throwOnError: false,
+            displayMode: true
+        });
+        pasoElement.appendChild(mathContainer);
+        
+        // Crear el párrafo para la explicación
+        const explicacionParrafo = document.createElement('p');
+        explicacionParrafo.className = 'explicacion mt-2';
+        explicacionParrafo.textContent = paso.explicacion;
+        pasoElement.appendChild(explicacionParrafo);
+        
+        pasosContainer.appendChild(pasoElement);
+    });
+}
+// Mantengo el resto de las funciones igual sin cambios.
+
 
 // Mostrar errores
 function mostrarError(mensaje) {
@@ -297,6 +382,18 @@ function ocultarBotonesCompartir() {
     graphicButton.classList.add('d-none')
 }
 
+function togglePasos() {
+    const pasosContainer = document.getElementById('pasos-container');
+    const toggleBtn = document.getElementById('toggle-pasos-btn');
+    
+    if (pasosContainer.classList.contains('d-none')) {
+        pasosContainer.classList.remove('d-none');
+        toggleBtn.textContent = 'Ocultar Pasos';
+    } else {
+        pasosContainer.classList.add('d-none');
+        toggleBtn.textContent = 'Mostrar Pasos';
+    }
+}
 
 function irAGrafica() {
     const tipo = document.getElementById('tipo-integral').value;

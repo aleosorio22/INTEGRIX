@@ -204,6 +204,20 @@ button.btn-success:active {
 /* Estilos adicionales para otros botones de compartir */
 
 
+.paso-integracion {
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 15px;
+}
 
+.math-container {
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.explicacion {
+    font-style: italic;
+    color: #6c757d;
+}
 
 
