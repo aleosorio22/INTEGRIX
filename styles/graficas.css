@@ -1,89 +1,171 @@
 body {
+    font-family: 'Roboto', sans-serif;
     background-color: #f0f2f5;
+    margin: 0;
+    padding: 0;
+    color: #333;
 }
 
 .container {
     display: flex;
     justify-content: center;
-    align-items: center;
-    height: 100vh;
-    flex-wrap: wrap;
-    gap: 20px; /* Añadimos un espacio entre los contenedores */
+    align-items: stretch;
+    min-height: 100vh;
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
+#grafica-container, #controles {
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
 }
 
 #grafica-container {
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 600px; /* Limitamos el tamaño máximo */
+    flex: 1;
+    max-width: 600px;
+    padding: 2rem;
+    margin-right: 2rem;
 }
 
 #controles {
-    width: 100%;
-    max-width: 400px; /* Limitamos el tamaño en pantallas grandes */
-    padding: 20px;
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
+    flex: 1;
+    max-width: 400px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 #canvas-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%; /* Cambiamos a 100% para que ocupe todo el ancho disponible */
-    height: auto;
-}
-
-
-#math-output {
-    margin-top: 20px;
-    text-align: center;
-    font-size: 20px;
-    background-color: #e9f7ef;
-    padding: 15px;
+    width: 100%;
+    height: 0;
+    padding-bottom: 75%; /* 4:3 Aspect Ratio */
+    position: relative;
+    overflow: hidden;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 100%; /* Hacemos que ocupe todo el ancho */
+    background-color: #f8f9fa;
 }
 
 canvas {
-    max-width: 100%;
-    height: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#math-output {
+    margin-top: 1.5rem;
+    font-size: 1.1rem;
+    background-color: #e9f7ef;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
 }
 
 .btn-group {
-    margin-top: 20px;
-    display: flex;
-    justify-content: space-around; /* Espaciamos los botones */
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
 }
 
 button {
-    width: 100%; /* Los botones ocupan todo el ancho disponible */
-    margin-bottom: 10px; /* Añadimos espacio entre los botones */
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.2rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-/* Media Queries para pantallas pequeñas */
-@media (max-width: 768px) {
+button:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
     .container {
-        flex-direction: column; /* Los elementos se colocan en columna */
-        height: auto; /* Ajustamos la altura para que no se vea cortada */
+        flex-direction: column;
+        align-items: center;
     }
 
-    #grafica-container {
-        width: 100%; /* Se ajusta al ancho completo */
+    #grafica-container, #controles {
+        max-width: 100%;
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 2rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .container {
+        padding: 1rem;
     }
 
-    #controles {
-        width: 100%; /* Los controles ocupan todo el ancho */
-        margin-left: 0; /* Eliminamos el margen lateral */
+    #grafica-container, #controles {
+        padding: 1.5rem;
+    }
+
+    .btn-group {
+        grid-template-columns: 1fr;
     }
 
     button {
-        width: 100%; /* Los botones ocupan todo el ancho en móviles */
+        padding: 1rem;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+#grafica-container, #controles {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Accessibility */
+button:focus {
+    outline: 3px solid #4CAF50;
+    outline-offset: 2px;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #1a1a1a;
+        color: #f0f0f0;
+    }
+
+    #grafica-container, #controles {
+        background-color: #2a2a2a;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    #math-output {
+        background-color: #3a3a3a;
+    }
+
+    button {
+        background-color: #45a049;
+    }
+
+    button:hover {
+        background-color: #4CAF50;
     }
 }

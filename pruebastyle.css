@@ -1,0 +1,278 @@
+/* Estilos generales */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f4f8;
+    margin: 0;
+    padding: 0;
+}
+.header {
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.container {
+    max-width: 600px;
+    margin: 2rem auto;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    padding: 2rem;
+}
+
+.error-message {
+    background-color: #ffebee;
+    border: 1px solid #ef9a9a;
+    color: #c62828;
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+h2 {
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+button {
+    width: 60px;
+    height: 60px;
+    font-size: 18px;
+    margin: 5px;
+    transition: transform 0.1s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #555;
+}
+
+select, input {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.btn-outline-secondary {
+    background-color: #f1f3f5;
+    border: 1px solid #ddd;
+    padding: 0.5rem;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+
+.button-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Efecto al hacer clic en los botones (botón presionado) */
+button:active {
+    transform: scale(0.95); /* Botón se hace más pequeño al presionar */
+    background-color: #d4edda; /* Color de fondo al presionar */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra más profunda */
+}
+
+/* Efecto hover para botones */
+button:hover {
+    background-color: #f1f1f1; /* Cambiar ligeramente el color al pasar el ratón */
+    cursor: pointer;
+}
+
+/* Transición suave al enfoque */
+button:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* Animación de fade-in para el resultado */
+@keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+#math-output {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.alert-info {
+    background-color: #e0f7fa;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+/* Sombra suave y borde redondeado en formularios */
+.form-control {
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 10px; /* Bordes redondeados */
+    border: 1px solid #ced4da;
+    transition: all 0.3s ease; /* Transición suave */
+}
+
+.btn-danger {
+    width: 49%;
+}
+
+.campo-bloqueado {
+    background-color: #f0f0f0;
+    cursor: not-allowed;
+}
+
+/* Estilos para la alerta */
+.d-none {
+    display: none;
+}
+
+/* Historial */
+#historial-output {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #ced4da;
+    margin-top: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+/* Separación entre cada integral en el historial */
+#historial-output p {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #ced4da;
+    animation: slideInLeft 0.3s ease-in-out; /* Animación para el historial */
+}
+
+/* Último elemento del historial sin borde */
+#historial-output p:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+/* Animación para que las nuevas entradas del historial se deslicen desde la izquierda */
+@keyframes slideInLeft {
+    0% { opacity: 0; transform: translateX(-20px); }
+    100% { opacity: 1; transform: translateX(0); }
+}
+
+/* Indicador de carga con animación */
+#loader {
+    animation: spin 1s infinite linear;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Separación y sombra en las secciones principales */
+section {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    padding: 20px;
+    border-radius: 10px; /* Bordes redondeados */
+}
+
+/* Efecto de hover en las secciones interactivas */
+section:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada al pasar el ratón */
+    transition: box-shadow 0.3s ease; /* Transición suave */
+}
+
+/* Botón toggle para mostrar/ocultar historial */
+#toggle-historial-btn {
+    width: 150px; /* Ajusta el ancho del botón */
+    height: 50px; /* Ajusta la altura del botón */
+    margin-top: 20px;
+    background-color: #007bff; /* Color de fondo del botón */
+    color: white; /* Color del texto */
+    font-size: 16px; /* Tamaño de fuente */
+    text-align: center; /* Alinear el texto al centro */
+    border: none; /* Quitar bordes */
+    border-radius: 10px; /* Bordes redondeados */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#toggle-historial-btn:hover {
+    background-color: #28a745;
+    transform: scale(1.05);
+}
+
+/* Historial oculto por defecto */
+#historial {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+/* Historial visible */
+#historial.visible {
+    display: block;
+    opacity: 1;
+}
+
+/* Botón compartido en redes */
+button.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: #fff;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Transición suave para color y escala */
+}
+
+button.btn-primary:hover {
+    background-color: #0056b3; /* Color más oscuro en hover */
+}
+
+button.btn-primary:active {
+    transform: scale(0.95); /* Efecto de reducción cuando se presiona */
+    background-color: #003d7a; /* Cambia el color al presionar */
+}
+
+/* Estilos adicionales para otros botones de compartir */
+button.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: #fff;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button.btn-success:hover {
+    background-color: #218838;
+}
+
+button.btn-success:active {
+    transform: scale(0.95);
+    background-color: #1e7e34;
+}
+
+/* Estilos adicionales para otros botones de compartir */
+
+
+.paso-integracion {
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 15px;
+}
+
+.math-container {
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.explicacion {
+    font-style: italic;
+    color: #6c757d;
+}
+
+
