@@ -8,6 +8,7 @@ async function cargarSymPy() {
 }
 
 let resultadoNumerico = null;
+
 // Resolver integral con validación
 async function resolverConValidacion() {
     const tipo = document.getElementById('tipo-integral').value;
@@ -45,6 +46,7 @@ async function resolverConValidacion() {
 
         if (tipo === 'indefinida' || tipo === 'por-partes' || tipo === 'sustitucion' || tipo === 'trigonometrica') {
             // Resolver integral indefinida (no necesita límites)
+            //codigo de pyton
             result = await pyodide.runPythonAsync(`
                 from sympy import symbols, integrate, sin, cos, tan, exp, log, sqrt, oo, pi, latex, diff
                 import json
@@ -103,16 +105,26 @@ async function resolverConValidacion() {
             // Obtener límites solo si son necesarios
             limiteInf = document.getElementById('limite-inf').value.trim();
             limiteSup = document.getElementById('limite-sup').value.trim();
+            
             // Reemplazar E o e por exp(1)
             limiteInf = limiteInf.replace(/E|e/g, 'exp(1)');
             limiteSup = limiteSup.replace(/E|e/g, 'exp(1)');
+            
+            //verificar si los limites son infinito positivo o negativo
             const selectInf = document.getElementById('infinito-inf').value;
             const selectSup = document.getElementById('infinito-sup').value;
-            if (selectInf === 'infinito') {
-                limiteInf = '-oo';
+
+            // Convertir -∞ y ∞ a las notaciones correspondientes de SymPy
+            if (limiteInf === '-∞' || selectInf === 'negativo-infinito') {
+                limiteInf = '-oo'; // Notación de SymPy para menos infinito
+            } else if (limiteInf === '∞' || selectInf === 'infinito') {
+                limiteInf = 'oo'; // Notación de SymPy para infinito positivo
             }
-            if (selectSup === 'infinito') {
-                limiteSup = 'oo';
+            
+            if (limiteSup === '-∞' || selectSup === 'negativo-infinito') {
+                limiteSup = '-oo'; // Notación de SymPy para menos infinito
+            } else if (limiteSup === '∞' || selectSup === 'infinito') {
+                limiteSup = 'oo'; // Notación de SymPy para infinito positivo
             }
             
             // Resolver integral definida o impropia
@@ -224,7 +236,6 @@ async function resolverConValidacion() {
     }
 }
 
-
 function mostrarPasosIntegracion(pasos) {
     const pasosContainer = document.getElementById('pasos-output');
     pasosContainer.innerHTML = '';  // Limpiar los pasos previos
@@ -256,8 +267,6 @@ function mostrarPasosIntegracion(pasos) {
         pasosContainer.appendChild(pasoElement);
     });
 }
-// Mantengo el resto de las funciones igual sin cambios.
-
 
 // Mostrar errores
 function mostrarError(mensaje) {
@@ -342,6 +351,9 @@ function toggleInput(tipoLimite, campoId) {
     if (selectElement.value === 'infinito') {
         inputElement.disabled = true; // Deshabilita el campo si se selecciona infinito
         inputElement.value = '∞'; // Opcional, para mostrar visualmente que es infinito
+    } else if (selectElement.value === 'negativo-infinito') { // Nueva condición para -∞
+        inputElement.disabled = true; // Deshabilita el campo si se selecciona -∞
+        inputElement.value = '-∞'; // Mostrar visualmente que es -∞
     } else {
         inputElement.disabled = false; // Habilita el campo si se selecciona número o expresión simbólica
         inputElement.value = ''; // Limpia el campo
