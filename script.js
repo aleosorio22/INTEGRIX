@@ -61,16 +61,28 @@ async function resolverConValidacion() {
                         "explicacion": "Esta es la función original que vamos a integrar."
                     },
                     {
-                        "paso": f"Aplicamos la regla de integración: {latex(integral_result)}",
-                        "explicacion": "Utilizamos las reglas básicas de integración para encontrar la antiderivada."
+                        "paso": f"Identificación del tipo de integral: {latex(input_expr)}",
+                        "explicacion": "Analizamos la estructura de la función para determinar el método de integración apropiado."
                     },
                     {
-                        "paso": f"Verificación: derivada de la integral: {latex(diff(integral_result, x))}",
-                        "explicacion": "Comprobamos que la derivada de nuestra integral es igual a la función original."
+                        "paso": f"Descomposición de términos: {latex(input_expr.expand())}",
+                        "explicacion": "Expandimos la expresión para identificar mejor sus componentes."
                     },
                     {
-                        "paso": f"Resultado simplificado: {latex(integral_result.simplify())}",
-                        "explicacion": "Simplificamos la expresión final para obtener la forma más compacta."
+                        "paso": f"Aplicación de reglas básicas: \\\\int {latex(input_expr)} \\\\, dx",
+                        "explicacion": "Aplicamos las reglas fundamentales de integración según la estructura de la función."
+                    },
+                    {
+                        "paso": f"Desarrollo de la integral: {latex(integral_result)}",
+                        "explicacion": "Realizamos los pasos algebraicos necesarios para encontrar la antiderivada."
+                    },
+                    {
+                        "paso": f"Simplificación preliminar: {latex(integral_result.simplify())}",
+                        "explicacion": "Simplificamos la expresión para una forma más manejable."
+                    },
+                    {
+                        "paso": f"Verificación por derivación: {latex(diff(integral_result, x))}",
+                        "explicacion": "Comprobamos que la derivada de nuestra antiderivada es igual a la función original."
                     },
                     {
                         "paso": f"Resultado final: {latex(integral_result)} + C",
@@ -78,6 +90,7 @@ async function resolverConValidacion() {
                     }
                 ]
                 
+
                 result = {
                     'latex_result': latex(integral_result) + ' + C',
                     'pasos': pasos_integracion
@@ -156,24 +169,36 @@ async function resolverConValidacion() {
                         "explicacion": "Estos son los límites de la integral definida."
                     },
                     {
-                        "paso": f"Calculamos la antiderivada: {latex(antiderivada)}",
-                        "explicacion": "Encontramos la antiderivada de la función."
+                        "paso": f"Identificación del tipo: {latex(input_expr)}",
+                        "explicacion": "Analizamos la estructura de la función y los límites."
                     },
                     {
-                        "paso": "Aplicamos el Teorema Fundamental del Cálculo:",
-                        "explicacion": "Evaluamos la antiderivada en los límites superior e inferior y restamos."
+                        "paso": f"Descomposición de términos: {latex(input_expr.expand())}",
+                        "explicacion": "Expandimos la expresión para identificar sus componentes."
                     },
                     {
-                        "paso": f"{latex(antiderivada.subs(x, limite_sup))} - {latex(antiderivada.subs(x, limite_inf))}",
-                        "explicacion": "Sustituimos los límites en la antiderivada."
+                        "paso": f"Antiderivada encontrada: {latex(antiderivada)}",
+                        "explicacion": "Esta es la antiderivada de la función original."
                     },
                     {
-                        "paso": f"Resultado: {latex(resultado_definida)}",
-                        "explicacion": "Este es el resultado de la integral definida."
+                        "paso": f"Evaluación en límite superior: {latex(antiderivada.subs(x, limite_sup))}",
+                        "explicacion": "Sustituimos el límite superior en la antiderivada."
                     },
                     {
-                        "paso": f"Valor numérico: {valor_numerico}",
-                        "explicacion": "Evaluación numérica del resultado."
+                        "paso": f"Evaluación en límite inferior: {latex(antiderivada.subs(x, limite_inf))}",
+                        "explicacion": "Sustituimos el límite inferior en la antiderivada."
+                    },
+                    {
+                        "paso": f"Aplicación del Teorema Fundamental: {latex(resultado_definida)}",
+                        "explicacion": "Restamos las evaluaciones según el Teorema Fundamental del Cálculo."
+                    },
+                    {
+                        "paso": f"Simplificación del resultado: {latex(resultado_definida.simplify())}",
+                        "explicacion": "Simplificamos la expresión final."
+                    },
+                    {
+                        "paso": f"Valor numérico: {latex(valor_numerico)}",
+                        "explicacion": "Este es el valor numérico final de la integral definida."
                     }
                 ]
                 
