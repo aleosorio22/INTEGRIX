@@ -1,50 +1,107 @@
 // Función para generar la imagen a partir del resultado y compartirla
-// Función para generar la imagen a partir del resultado y compartirla
 function generarImagenResultado() {
     const canvas = document.getElementById('resultado-canvas');
     const ctx = canvas.getContext('2d');
 
     // Ajustar tamaño del canvas
-    canvas.width = 800;
-    canvas.height = 450;
+    canvas.width = 1200;
+    canvas.height = 630;
 
-    // Crear fondo oscuro
-    ctx.fillStyle = '#16423C';
+    // Crear fondo con gradiente
+    const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+    gradient.addColorStop(0, '#0A2A27');
+    gradient.addColorStop(1, '#0D3B37');
+    ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Dibujar logo
     const logo = new Image();
-    logo.src = 'logo.png'; // Asegúrate de tener el logo en la ruta correcta
+    logo.src = 'img/logoIntegrix-removebg-preview.png';
     logo.onload = function () {
-        ctx.drawImage(logo, 30, 30, 100, 100); // Ajusta la posición del logo
+        ctx.drawImage(logo, 50, 50, 120, 120);
 
-        // Dibujar título con una fuente moderna y color claro
+        // Dibujar título
         ctx.fillStyle = '#FFFFFF';
-        ctx.font = 'bold 30px Poppins, sans-serif';
-        ctx.fillText('IntegriX - Calculadora de Integrales', 150, 80);
+        ctx.font = 'bold 48px Poppins, sans-serif';
+        ctx.fillText('IntegriX - Calculadora de Integrales', 200, 120);
 
-        // Usar html2canvas para capturar el contenido renderizado con KaTeX
-        const katexElement = document.getElementById('math-output'); // Elemento KaTeX
+        // Definir el área blanca
+        const whiteAreaX = 100;
+        const whiteAreaY = 180;
+        const whiteAreaWidth = canvas.width - 200;
+        const whiteAreaHeight = 300;
 
-        // Establecer explícitamente el color del texto en KaTeX para que sea blanco
-        katexElement.style.color = '#FFFFFF';
+        // Crear un área para el resultado con mejor contraste
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(whiteAreaX, whiteAreaY, whiteAreaWidth, whiteAreaHeight);
 
-        html2canvas(katexElement, { backgroundColor: null }).then(function (katexCanvas) {
-            // Insertar la captura de KaTeX en el canvas sin fondo blanco
-            ctx.drawImage(katexCanvas, 150, 150);
+        // Capturar el contenido de KaTeX
+        const katexElement = document.getElementById('math-output');
+        if (!katexElement) {
+            console.error("El elemento 'math-output' no se encontró.");
+            return;
+        }
 
-            // Añadir una frase final con fuente clara
-            ctx.font = 'italic 18px Poppins, sans-serif';
-            ctx.fillStyle = '#CCCCCC';
-            ctx.fillText('Calculado por IntegriX', 150, 350);
-            ctx.fillText('¡Sigue mejorando tus cálculos con nosotros!', 150, 380);
+        // Crear un contenedor temporal para el contenido de KaTeX
+        const tempContainer = document.createElement('div');
+        tempContainer.style.position = 'absolute';
+        tempContainer.style.left = '-9999px';
+        tempContainer.style.color = '#000000';
+        tempContainer.style.background = 'transparent';
+        tempContainer.style.width = whiteAreaWidth + 'px';
+        tempContainer.style.fontSize = '40px'; // Aumentar un poco más el tamaño de la fuente
+        tempContainer.innerHTML = katexElement.innerHTML;
+        document.body.appendChild(tempContainer);
+
+        // Capturar el contenido de KaTeX con html2canvas
+        html2canvas(tempContainer, { 
+            backgroundColor: null,
+            scale: 2
+        }).then(function (katexCanvas) {
+            document.body.removeChild(tempContainer);
+
+            if (!katexCanvas) {
+                console.error("No se pudo capturar el contenido de KaTeX.");
+                return;
+            }
+
+            // Calcular las dimensiones para centrar y ajustar el tamaño
+            const scale = Math.min(
+                (whiteAreaWidth - 40) / katexCanvas.width,
+                (whiteAreaHeight - 40) / katexCanvas.height
+            );
+            const scaledWidth = katexCanvas.width * scale;
+            const scaledHeight = katexCanvas.height * scale;
+            const x = whiteAreaX + (whiteAreaWidth - scaledWidth) / 2;
+            const y = whiteAreaY + (whiteAreaHeight - scaledHeight) / 2;
+
+            // Insertar la captura de KaTeX en el canvas
+            ctx.drawImage(katexCanvas, x, y, scaledWidth, scaledHeight);
+
+            // Añadir fecha y hora
+            const now = new Date();
+            ctx.font = '24px Poppins, sans-serif';
+            ctx.fillStyle = '#A0E4D7';
+            ctx.fillText(now.toLocaleString(), 100, canvas.height - 100);
+
+            // Añadir frase final
+            ctx.font = 'italic 28px Poppins, sans-serif';
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillText('Calculado por IntegriX', 100, canvas.height - 60);
+            ctx.fillText('¡Sigue mejorando tus cálculos con nosotros!', 100, canvas.height - 20);
 
             // Convertir el canvas a una URL de imagen
             const imagenGenerada = canvas.toDataURL('image/png');
 
             // Compartir o descargar la imagen
             compartirImagen(imagenGenerada);
+        }).catch(error => {
+            console.error("Error al capturar el contenido de KaTeX:", error);
         });
+    };
+
+    logo.onerror = function () {
+        console.error("Error al cargar la imagen del logo. Verifica la ruta del logo.");
     };
 }
 

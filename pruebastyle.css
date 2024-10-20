@@ -259,20 +259,90 @@ button.btn-success:active {
 /* Estilos adicionales para otros botones de compartir */
 
 
-.paso-integracion {
-    border-bottom: 1px solid #e0e0e0;
-    padding-bottom: 15px;
-}
-
 .math-container {
     background-color: #f8f9fa;
     padding: 10px;
     border-radius: 5px;
 }
 
+/* Estilos para los pasos */
+#pasos-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.paso-integracion {
+    background-color: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    word-wrap: break-word;  /* Permite que las palabras largas se ajusten */
+    overflow-wrap: break-word;  /* Permite ajustar el contenido dentro de los bordes */
+    max-width: 100%;  /* Asegura que el contenido no se desborde */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.paso-integracion h5 {
+    font-size: 1.25rem;
+    color: #333;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+.math-container {
+    background-color: #ffffff;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    word-wrap: break-word; /* Permite que las ecuaciones largas se ajusten */
+    overflow-x: auto;  /* Añade scroll horizontal si es necesario */
+    text-align: center;
+}
+
 .explicacion {
     font-style: italic;
     color: #6c757d;
+    margin-top: 5px;
+    text-align: left;
 }
 
+/* Media query para pantallas más pequeñas */
+@media (max-width: 768px) {
+    .paso-integracion h5 {
+        font-size: 1.1rem;
+    }
+
+    .paso-integracion {
+        padding: 10px;
+    }
+
+    .math-container {
+        font-size: 0.9rem;
+        text-align: center;
+    }
+
+    .explicacion {
+        font-size: 0.9rem;
+    }
+}
+
+/* Ajuste para dispositivos muy pequeños (móviles pequeños) */
+@media (max-width: 480px) {
+    .paso-integracion h5 {
+        font-size: 1rem;
+    }
+
+    .math-container {
+        font-size: 0.85rem;
+    }
+
+    .explicacion {
+        font-size: 0.85rem;
+    }
+}
 

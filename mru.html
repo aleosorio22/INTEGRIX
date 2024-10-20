@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IntegriX - MRU con Integrales</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles/mru.css"> <!-- Archivo CSS específico para MRU -->
+</head>
+<body>
+    <!-- Encabezado -->
+    <header class="header">
+        <h1>IntegriX - Movimiento Rectilíneo Uniforme (MRU)</h1>
+    </header>
+
+    <!-- Contenedor Principal -->
+    <div class="container mt-4">
+        <!-- Formulario de Entrada -->
+        <section id="input-section">
+            <h2>Definición de Velocidad</h2>
+            <div class="mb-3">
+                <label for="velocidad" class="form-label">Función de Velocidad (v(t)): </label>
+                <input type="text" id="velocidad" class="form-control" placeholder="Ej: 3t + 2">
+            </div>
+            <div class="mb-3">
+                <label for="tiempo-inicial" class="form-label">Tiempo Inicial (t<sub>1</sub>): </label>
+                <input type="number" id="tiempo-inicial" class="form-control" placeholder="Ej: 0">
+            </div>
+            <div class="mb-3">
+                <label for="tiempo-final" class="form-label">Tiempo Final (t<sub>2</sub>): </label>
+                <input type="number" id="tiempo-final" class="form-control" placeholder="Ej: 5">
+            </div>
+            <button id="calcular" class="btn btn-success w-100">Calcular Desplazamiento</button>
+        </section>
+
+        <!-- Resultado y Gráfica -->
+        <section id="resultado" class="mt-4">
+            <h2>Resultado:</h2>
+            <div id="resultado-output" class="alert alert-info">Ingrese la función de velocidad para calcular el desplazamiento.</div>
+        </section>
+
+        <!-- Gráfica -->
+        <section id="grafica-section" class="mt-4">
+            <h2>Gráfica del Movimiento</h2>
+            <canvas id="grafica-velocidad"></canvas> <!-- Gráfica para velocidad -->
+            <canvas id="grafica-desplazamiento" class="mt-4"></canvas> <!-- Gráfica para desplazamiento -->
+        </section>
+    </div>
+
+    <!-- Bootstrap JS y otros scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Librería para graficación -->
+    <script src="script/mru.js"></script> <!-- Lógica específica del MRU -->
+</body>
+</html>

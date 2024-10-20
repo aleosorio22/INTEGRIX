@@ -242,11 +242,11 @@ function mostrarPasosIntegracion(pasos) {
 
     pasos.forEach((paso, index) => {
         const pasoElement = document.createElement('div');
-        pasoElement.className = 'paso-integracion mb-3';
+        pasoElement.className = 'paso-integracion mb-3';  // Aplicar clase CSS
         
         // Crear el encabezado del paso
         const pasoHeader = document.createElement('h5');
-        pasoHeader.textContent = `Paso ${index + 1}`;
+        pasoHeader.textContent = `Paso ${index + 1}`;  // Dinámico
         pasoElement.appendChild(pasoHeader);
         
         // Crear el contenedor para la expresión matemática
@@ -261,12 +261,14 @@ function mostrarPasosIntegracion(pasos) {
         // Crear el párrafo para la explicación
         const explicacionParrafo = document.createElement('p');
         explicacionParrafo.className = 'explicacion mt-2';
-        explicacionParrafo.textContent = paso.explicacion;
+        explicacionParrafo.textContent = paso.explicacion;  // Agregar explicación
         pasoElement.appendChild(explicacionParrafo);
         
+        // Añadir el paso al contenedor de pasos
         pasosContainer.appendChild(pasoElement);
     });
 }
+
 
 // Mostrar errores
 function mostrarError(mensaje) {
