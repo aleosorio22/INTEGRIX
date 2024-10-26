@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IntegriX - Calculadora de Integrales con Pyodide</title>
+    <title>IntegriX - Calculadora de Derivadas Parciales con Pyodide</title>
     <link rel="icon" type="image/png" href="img/logoIntegrix-removebg-preview.png">
 
     <!-- Bootstrap CSS -->
@@ -26,7 +26,7 @@
         <a href="index.html">
             <img src="img/logoIntegrix-removebg-preview.png" alt="IntegriX Logo" style="width: 50px; height: 50px; margin-right: 10px;">
         </a>
-        <h1>IntegriX - Calculadora de Integrales</h1>
+        <h1>IntegriX - Calculadora de Derivadas Parciales</h1>
     </header>
 
     <!-- Contenedor Principal -->
@@ -34,29 +34,16 @@
 
         <!-- Mensaje de error -->
         <div id="alerta-error" class="alert alert-danger d-none" role="alert">
-            ¡Error en el cálculo de la integral!
+            ¡Error en el cálculo de la derivada!
         </div>
 
         <!-- Formulario -->
         <section id="input-section" class="card p-4 shadow-sm">
-            <h2 class="mb-4">Selecciona el tipo de integral</h2>
+            <h2 class="mb-4">Ingresa la función para derivar</h2>
             
-            <!-- Selección de tipo de integral -->
+            <!-- Campo para la función a derivar con renderizado en tiempo real -->
             <div class="mb-3">
-                <label for="tipo-integral" class="form-label">Tipo de Integral:</label>
-                <select id="tipo-integral" class="form-select">
-                    <option value="indefinida">Indefinida</option>
-                    <option value="definida">Definida</option>
-                    <option value="impropia">Impropia</option>
-                    <option value="por-partes">Integración por partes</option>
-                    <option value="sustitucion">Por sustitución</option>
-                    <option value="trigonometrica">Potencias trigonométricas</option>
-                </select>
-            </div>            
-
-            <!-- Campo para la función a integrar con renderizado en tiempo real -->
-            <div class="mb-3">
-                <label for="math-input" class="form-label">Función para integrar:</label>
+                <label for="math-input" class="form-label">Función para derivar:</label>
                 <div id="math-render" class="form-control" style="min-height: 50px; background-color: #f8f9fa; padding: 10px;"></div>
                 <input type="text" id="math-input" class="form-control d-none" placeholder="Escribe una fórmula LaTeX aquí">
             </div>
@@ -78,6 +65,7 @@
                 
                     <!-- Operadores y funciones -->
                     <button class="btn btn-outline-secondary" onclick="agregarSimbolo('x')">x</button>
+                    <button class="btn btn-outline-secondary" onclick="agregarSimbolo('y')">y</button>
                     <button class="btn btn-outline-secondary" onclick="agregarSimbolo('+')">+</button>
                     <button class="btn btn-outline-secondary" onclick="agregarSimbolo('-')">-</button>
                     <button class="btn btn-outline-secondary" onclick="agregarSimbolo('*')">*</button>
@@ -105,56 +93,27 @@
                 </div>
             </div>
 
-            <!-- Límites para integrales definidas o impropias -->
-            <div id="limites" class="mb-3" style="display: none;">
-                <label for="limite-inf" class="form-label">Límite inferior:</label>
-                <div class="input-group">
-                    <select id="infinito-inf" class="form-select" onchange="toggleInput('inf', 'limite-inf')">
-                        <option value="none">Número</option>
-                        <option value="negativo-infinito">-∞</option>
-                        <option value="infinito">∞</option>
-                    </select>
-                    <input type="text" id="limite-inf" class="form-control" placeholder="Ej: 1">
-                </div>
-                
-                <label for="limite-sup" class="form-label mt-3">Límite superior:</label>
-                <div class="input-group">
-                    <select id="infinito-sup" class="form-select" onchange="toggleInput('sup', 'limite-sup')">
-                        <option value="none">Número</option>
-                        <option value="negativo-infinito">-∞</option>
-                        <option value="infinito">∞</option>
-                    </select>
-                    <input type="text" id="limite-sup" class="form-control" placeholder="Ej: 3">
-                </div>
-            </div>
-
             <!-- Botón para resolver -->
-            <button id="resolver" class="btn btn-success w-100" onclick="resolverConValidacion()">Resolver Integral</button>
+            <button id="resolver" class="btn btn-success w-100" onclick="resolverConValidacion()">Resolver Derivada</button>
         </section>
 
         <!-- Resultado -->
         <section id="resultado" class="mt-4">
             <h2>Resultado:</h2>
-            <div id="math-output" class="alert alert-info" role="alert">Ingresa una funcion para ver su resultado.</div>
+            <div id="math-output" class="alert alert-info" role="alert">Ingresa una función para ver su resultado.</div>
             <div id="loader" class="spinner-border text-success d-none" role="status">
                 <span class="visualmente-oculto"></span>
             </div>
 
-            <!-- Mostrar los pasos intermedios de la integral -->
+            <!-- Mostrar los pasos intermedios de la derivada -->
             <div id="pasos-container" class="mt-4">
                 <h3>Pasos del Cálculo:</h3>
-                <div id="pasos-output" class="alert alert-secondary" role="alert">Integra la funcion para ver los pasos...</div>
+                <div id="pasos-output" class="alert alert-secondary" role="alert">Deriva la función para ver los pasos...</div>
             </div>
             
             <!-- Botón para mostrar/ocultar pasos -->
             <div class="text-center mt-4">
                 <button id="toggle-pasos-btn" class="btn btn-primary w-100" onclick="togglePasos()">Mostrar/Ocultar Pasos</button>
-            </div>
-
-            <div class="row mt-3">
-                <div class="col-12">
-                    <button id="graphic-button" class="btn btn-primary w-100 d-none" onclick="irAGrafica()">Ver Gráfica</button>
-                </div>
             </div>
 
             <!-- Botón para compartir el resultado como imagen -->
@@ -188,13 +147,11 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script src="script/graphics.js"></script>
-    <script src="script/graphics.js"></script>
-    <script src="script/shareResult.js"></script>
-    <script src="script.js"></script>
+    <script src="script/derivadas.js"></script>
+    
 
 <!-- Canvas oculto para generar la imagen del resultado -->
 <canvas id="resultado-canvas" style="display:none;"></canvas>
-
 
 </body>
 </html>

@@ -1,6 +1,7 @@
 // Cargar Pyodide y SymPy
 let pyodideReadyPromise = loadPyodide();
 
+
 async function cargarSymPy() {
     const pyodide = await pyodideReadyPromise;
     await pyodide.loadPackage("sympy");
@@ -492,6 +493,8 @@ function togglePasos() {
     }
 }
 
+
+// Función para copiar el resultado al parametros URL
 function irAGrafica() {
     const tipo = document.getElementById('tipo-integral').value;
     const input = document.getElementById('math-input').value.trim();
